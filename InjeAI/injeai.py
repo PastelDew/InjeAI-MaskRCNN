@@ -208,6 +208,7 @@ class InjeAIDataset(utils.Dataset):
             mask_image = mask_image > 0
             mask[:, :, i] = mask_image
             class_ids[i] = class_id
+            print('[{}] {}) {} - {}'.format(image_id, i, class_id, mask_path))
 
         # Return mask, and array of class IDs of each instance.
         return mask.astype(np.bool), class_ids
