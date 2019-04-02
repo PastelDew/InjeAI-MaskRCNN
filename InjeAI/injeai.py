@@ -73,6 +73,9 @@ class InjeAIConfig(Config):
 
     # Skip detections with < 90% confidence
     DETECTION_MIN_CONFIDENCE = 0.9
+
+    IMAGE_MAX_DIM = 640
+    IMAGE_MIN_DIM = 512
     
     ## Custom config by pasteldew
     #BACKBONE = "resnet50"
