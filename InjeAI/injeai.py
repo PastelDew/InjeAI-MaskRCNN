@@ -147,7 +147,7 @@ class InjeAIDataset(utils.Dataset):
                         break
 
                 if not hasClass:
-                    print("Class Added: ", class_id, class_name)
+                    print("[{:%s}]Class Added: ".format(subset), class_id, class_name)
                     self.add_class(self.class_source, class_id, class_name)
 
                 masks.append({"path": mask_path, "class_id": class_id})
