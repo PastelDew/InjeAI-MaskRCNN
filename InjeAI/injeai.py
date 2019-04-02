@@ -69,14 +69,11 @@ class InjeAIConfig(Config):
     NUM_CLASSES = 1 + 1  # Background + InjeAI
 
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 100
+    STEPS_PER_EPOCH = 50
 
     # Skip detections with < 90% confidence
     DETECTION_MIN_CONFIDENCE = 0.9
 
-    IMAGE_MAX_DIM = 640
-    IMAGE_MIN_DIM = 512
-    
     ## Custom config by pasteldew
     #BACKBONE = "resnet50"
     #IMAGE_RESIZE_MODE = "crop"
@@ -208,7 +205,7 @@ class InjeAIDataset(utils.Dataset):
             mask_image = mask_image > 0
             mask[:, :, i] = mask_image
             class_ids[i] = class_id
-            print('[{}] {}) {} - {}'.format(image_id, i, class_id, mask_path))
+            #print('[{}] {}) {} - {}'.format(image_id, i, class_id, mask_path))
 
         # Return mask, and array of class IDs of each instance.
         return mask.astype(np.bool), class_ids
