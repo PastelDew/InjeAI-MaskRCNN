@@ -191,7 +191,7 @@ class InjeAIDataset(utils.Dataset):
         # [height, width, instance_count]
         mask = np.zeros([info["height"], info["width"], len(info["masks"])],
                         dtype=np.uint8)
-        class_ids = np.ones([mask.shape[-1]], dtype=np.int32) #np.zeros([mask.shape[-1]], dtype=np.int32)
+        class_ids = np.zeros([mask.shape[-1]], dtype=np.int32)
         for i, m in enumerate(info["masks"]):
             mask_path = m['path']
             class_id = m['class_id']
@@ -204,10 +204,7 @@ class InjeAIDataset(utils.Dataset):
             mask_image = mask_image.astype(np.uint8)
             mask_image = (mask_image > 0) == 0
             mask[:, :, i] = mask_image
-
-            #skimage.io.imsave(fname=join(DEFAULT_LOGS_DIR, "test", os.path.basename(mask_path)),arr=mask[:,:,i])
-            #class_ids[i] = class_id
-            #print('[{}] {}) {} - {}'.format(image_id, i, class_id, mask_path))
+            class_ids[i] = class_id
 
         # Return mask, and array of class IDs of each instance.
         return mask.astype(np.bool), class_ids
@@ -359,7 +356,7 @@ if __name__ == '__main__':
     print("Logs: ", args.logs)
 
 
-    """ Fit generation issue
+    
     #tf_config = tf.ConfigProto(allow_soft_placement=True,
                 #intra_op_parallelism_threads=1,
                 #inter_op_parallelism_threads=1,
@@ -370,7 +367,7 @@ if __name__ == '__main__':
     #tf_config.gpu_options.per_process_gpu_memory_fraction = 1
 
     k.tensorflow_backend.set_session(tf.Session(config=tf_config))
-    """
+    
 
     # Configurations
     if args.command == "train":
