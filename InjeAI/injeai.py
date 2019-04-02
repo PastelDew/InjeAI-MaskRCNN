@@ -355,6 +355,8 @@ if __name__ == '__main__':
     print("Dataset: ", args.dataset)
     print("Logs: ", args.logs)
 
+
+    """ Fit generation issue
     #tf_config = tf.ConfigProto(allow_soft_placement=True,
                 #intra_op_parallelism_threads=1,
                 #inter_op_parallelism_threads=1,
@@ -365,6 +367,7 @@ if __name__ == '__main__':
     #tf_config.gpu_options.per_process_gpu_memory_fraction = 1
 
     k.tensorflow_backend.set_session(tf.Session(config=tf_config))
+    """
 
     # Configurations
     if args.command == "train":
