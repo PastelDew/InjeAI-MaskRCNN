@@ -147,7 +147,7 @@ class InjeAIDataset(utils.Dataset):
                         break
 
                 if not hasClass:
-                    print("[{}]Class Added: ".format(subset), class_id, class_name)
+                    print("[{}] Class Added: ".format(subset), class_id, class_name)
                     self.add_class(self.class_source, class_id, class_name)
 
                 masks.append({"path": mask_path, "class_id": class_id})
@@ -191,7 +191,7 @@ class InjeAIDataset(utils.Dataset):
         # [height, width, instance_count]
         mask = np.zeros([info["height"], info["width"], len(info["masks"])],
                         dtype=np.uint8)
-        class_ids = np.zeros([mask.shape[-1]], dtype=np.int32)
+        class_ids = np.ones([mask.shape[-1]], dtype=np.int32) #np.zeros([mask.shape[-1]], dtype=np.int32)
         for i, m in enumerate(info["masks"]):
             mask_path = m['path']
             class_id = m['class_id']
@@ -204,9 +204,10 @@ class InjeAIDataset(utils.Dataset):
             mask_image = mask_image.astype(np.uint8)
             mask_image = mask_image > 0
             mask[:, :, i] = mask_image
-            class_ids[i] = class_id
+
+            skimage.io.imsave(fname=join(DEFAULT_LOGS_DIR, "test", mask_path),arr=mask[:,:,i])
+            #class_ids[i] = class_id
             #print('[{}] {}) {} - {}'.format(image_id, i, class_id, mask_path))
-        print("Size: ", mask.shape[-1])
 
         # Return mask, and array of class IDs of each instance.
         return mask.astype(np.bool), class_ids
