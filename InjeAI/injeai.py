@@ -205,7 +205,7 @@ class InjeAIDataset(utils.Dataset):
             mask_image = (mask_image > 0) == 0
             mask[:, :, i] = mask_image
 
-            skimage.io.imsave(fname=join(DEFAULT_LOGS_DIR, "test", os.path.basename(mask_path)),arr=mask[:,:,i])
+            #skimage.io.imsave(fname=join(DEFAULT_LOGS_DIR, "test", os.path.basename(mask_path)),arr=mask[:,:,i])
             #class_ids[i] = class_id
             #print('[{}] {}) {} - {}'.format(image_id, i, class_id, mask_path))
 
