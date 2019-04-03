@@ -74,6 +74,15 @@ class InjeAIConfig(Config):
     # Skip detections with < 90% confidence
     DETECTION_MIN_CONFIDENCE = 0.9
 
+    def __init__(self, channel = 3):
+        assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
+        self.IMAGE_CHANNEL_COUNT = channel
+        if channel == 1 or channel == 3: return
+        elif channel == 4:
+            self.MEAN_PIXEL.append(10)
+        #elif channel == 1:
+            #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
+
     ## Custom config by pasteldew
     #BACKBONE = "resnet50"
     #IMAGE_RESIZE_MODE = "crop"
@@ -342,6 +351,14 @@ if __name__ == '__main__':
     parser.add_argument('--video', required=False,
                         metavar="path or URL to video",
                         help='Video to apply the color splash effect on')
+    parser.add_argument('--channels', required=False,
+                        default=3,
+                        metavar="1, 3 or 4(default: 3)",
+                        help='Channels of image to training')
+    parser.add_argument('--exclude', required=False,
+                        default=False,
+                        metavar="true or false",
+                        help='If you want to use pre-trained weights with different channels then set this option to true.')
     args = parser.parse_args()
 
     # Validate arguments
@@ -409,11 +426,16 @@ if __name__ == '__main__':
     if args.weights.lower() == "coco":
         # Exclude the last layers because they require a matching
         # number of classes
-        model.load_weights(weights_path, by_name=True, exclude=[
-            "mrcnn_class_logits", "mrcnn_bbox_fc",
-            "mrcnn_bbox", "mrcnn_mask"])
+        exclude = ["mrcnn_class_logits", "mrcnn_bbox_fc",
+            "mrcnn_bbox", "mrcnn_mask"]
+        if args.exclude == True:
+            exclude.append("conv_depth")
+        model.load_weights(weights_path, by_name=True, exclude=exclude)
     else:
-        model.load_weights(weights_path, by_name=True)
+        if args.exclude == True:
+            model.load_weights(weights_path, by_name=True, exclude=["conv_depth"])
+        else:
+            model.load_weights(weights_path, by_name=True)
 
     # Train or evaluate
     if args.command == "train":
