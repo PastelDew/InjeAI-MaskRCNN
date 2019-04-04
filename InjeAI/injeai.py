@@ -75,18 +75,14 @@ class InjeAIConfig(Config):
     DETECTION_MIN_CONFIDENCE = 0.9
 
     def __init__(self, channel = 3):
-        print("!!!!!!TEST INITIALIZED")
         Config.__init__(self)
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
         self.IMAGE_CHANNEL_COUNT = channel
         if channel == 1 or channel == 3: return
         elif channel == 4:
-            print("[4 chan] MEAN_PIXEL before: ", self.MEAN_PIXEL)
             self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 10)
-            print("[4 chan] MEAN_PIXEL after: ", self.MEAN_PIXEL)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
-        print("MEAN_PIXEL: ", self.MEAN_PIXEL)
 
     ## Custom config by pasteldew
     #BACKBONE = "resnet50"
@@ -110,12 +106,13 @@ class InjeAIConfig(Config):
 
 class InjeAIDataset(utils.Dataset):
 
-    def load_InjeAI(self, dataset_dir, subset):
+    def load_InjeAI(self, dataset_dir, subset, channels):
         """Load a subset of the InjeAI dataset.
         dataset_dir: Root directory of the dataset.
         subset: Subset to load: train or val
         """
         self.class_source = "InjeAI"
+        self.channel_count = channels
         #self.add_class(self.class_source, 0, "No Masks")
 
         # Train or validation dataset?
@@ -183,10 +180,11 @@ class InjeAIDataset(utils.Dataset):
         if image.ndim == 1:
             image = skimage.color.gray2rgb(image)
         # If has an alpha channel, remove it for consistency
-        """ Removed for alpha channel
-        if image.shape[-1] == 4:
+        if image.shape[-1] == 4 and self.channel_count == 3:
             image = image[..., :3]
-        """
+        elif image.shape[-1] == 3 and self.channel_count == 4:
+            alpha = np.zeros([image.shape[0], image.shape[1]], dtype=np.uint8)
+            image = np.dstack((image, arr))
         return image
 
     def load_mask(self, image_id):
@@ -232,16 +230,16 @@ class InjeAIDataset(utils.Dataset):
             super(self.__class__, self).image_reference(image_id)
 
 
-def train(model):
+def train(model, channels):
     """Train the model."""
     # Training dataset.
     dataset_train = InjeAIDataset()
-    dataset_train.load_InjeAI(args.dataset, "train")
+    dataset_train.load_InjeAI(args.dataset, "train", channels)
     dataset_train.prepare()
 
     # Validation dataset
     dataset_val = InjeAIDataset()
-    dataset_val.load_InjeAI(args.dataset, "val")
+    dataset_val.load_InjeAI(args.dataset, "val", channels)
     dataset_val.prepare()
 
     # *** This training schedule is an example. Update to your needs ***
@@ -446,7 +444,7 @@ if __name__ == '__main__':
 
     # Train or evaluate
     if args.command == "train":
-        train(model)
+        train(model, args.channels)
     elif args.command == "splash":
         detect_and_color_splash(model, image_path=args.image,
                                 video_path=args.video)
