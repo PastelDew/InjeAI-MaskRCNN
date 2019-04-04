@@ -230,7 +230,7 @@ class InjeAIDataset(utils.Dataset):
             super(self.__class__, self).image_reference(image_id)
 
 
-def train(model, channels):
+def train(model):
     """Train the model."""
     # Training dataset.
     dataset_train = InjeAIDataset()
@@ -444,7 +444,7 @@ if __name__ == '__main__':
 
     # Train or evaluate
     if args.command == "train":
-        train(model, args.channels)
+        train(model)
     elif args.command == "splash":
         detect_and_color_splash(model, image_path=args.image,
                                 video_path=args.video)
