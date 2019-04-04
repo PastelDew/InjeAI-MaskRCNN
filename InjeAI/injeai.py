@@ -394,7 +394,6 @@ if __name__ == '__main__':
     
 
     # Configurations
-    args.channels = int(args.channels, 3)
     if args.command == "train":
         config = InjeAIConfig(args.channels)
     else:
