@@ -434,11 +434,11 @@ if __name__ == '__main__':
         exclude = ["mrcnn_class_logits", "mrcnn_bbox_fc",
             "mrcnn_bbox", "mrcnn_mask"]
         if args.exclude == True:
-            exclude.append("conv_depth")
+            exclude.append("conv1")
         model.load_weights(weights_path, by_name=True, exclude=exclude)
     else:
         if args.exclude == True:
-            model.load_weights(weights_path, by_name=True, exclude=["conv_depth"])
+            model.load_weights(weights_path, by_name=True, exclude=["conv1"])
         else:
             model.load_weights(weights_path, by_name=True)
 
