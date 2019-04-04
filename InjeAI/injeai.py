@@ -82,7 +82,7 @@ class InjeAIConfig(Config):
         if channel == 1 or channel == 3: return
         elif channel == 4:
             print("[4 chan] MEAN_PIXEL before: ", self.MEAN_PIXEL)
-            self.MEAN_PIXEL.append(10)
+            self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 10)
             print("[4 chan] MEAN_PIXEL after: ", self.MEAN_PIXEL)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
