@@ -234,12 +234,12 @@ def train(model, channels):
     """Train the model."""
     # Training dataset.
     dataset_train = InjeAIDataset()
-    dataset_train.load_InjeAI(args.dataset, "train", channels)
+    dataset_train.load_InjeAI(args.dataset, "train", model.config.IMAGE_CHANNEL_COUNT)
     dataset_train.prepare()
 
     # Validation dataset
     dataset_val = InjeAIDataset()
-    dataset_val.load_InjeAI(args.dataset, "val", channels)
+    dataset_val.load_InjeAI(args.dataset, "val", model.config.IMAGE_CHANNEL_COUNT)
     dataset_val.prepare()
 
     # *** This training schedule is an example. Update to your needs ***
