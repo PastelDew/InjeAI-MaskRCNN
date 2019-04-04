@@ -75,7 +75,6 @@ class InjeAIConfig(Config):
     DETECTION_MIN_CONFIDENCE = 0.9
 
     def __init__(self, channel = 3):
-        Config.__init__(self)
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
         self.IMAGE_CHANNEL_COUNT = channel
         if channel == 1 or channel == 3: return
@@ -83,6 +82,7 @@ class InjeAIConfig(Config):
             self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 10)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
+        Config.__init__(self)
 
     ## Custom config by pasteldew
     #BACKBONE = "resnet50"
