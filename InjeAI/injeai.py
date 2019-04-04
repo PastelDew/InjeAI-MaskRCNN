@@ -75,6 +75,7 @@ class InjeAIConfig(Config):
     DETECTION_MIN_CONFIDENCE = 0.9
 
     def __init__(self, channel = 3):
+        print("!!!!!!TEST INITIALIZED")
         Config.__init__(self)
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
         self.IMAGE_CHANNEL_COUNT = channel
@@ -390,14 +391,14 @@ if __name__ == '__main__':
 
     # Configurations
     if args.command == "train":
-        config = InjeAIConfig()
+        config = InjeAIConfig(args.channels)
     else:
         class InferenceConfig(InjeAIConfig):
             # Set batch size to 1 since we'll be running inference on
             # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
             GPU_COUNT = 1
             IMAGES_PER_GPU = 1
-        config = InferenceConfig()
+        config = InferenceConfig(args.channels)
     config.display()
 
     # Create model
