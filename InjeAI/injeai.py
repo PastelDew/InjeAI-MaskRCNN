@@ -358,10 +358,12 @@ if __name__ == '__main__':
                         help='Video to apply the color splash effect on')
     parser.add_argument('--channels', required=False,
                         default=3,
+                        type=int,
                         metavar="1, 3 or 4(default: 3)",
                         help='Channels of image to training')
     parser.add_argument('--exclude', required=False,
                         default=False,
+                        type=bool,
                         metavar="true or false",
                         help='If you want to use pre-trained weights with different channels then set this option to true.')
     args = parser.parse_args()
