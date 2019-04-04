@@ -83,6 +83,7 @@ class InjeAIConfig(Config):
             self.MEAN_PIXEL.append(10)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
+        print("MEAN_PIXEL: ", self.MEAN_PIXEL)
 
     ## Custom config by pasteldew
     #BACKBONE = "resnet50"
