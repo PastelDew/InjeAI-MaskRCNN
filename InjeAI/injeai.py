@@ -209,9 +209,9 @@ class InjeAIDataset(utils.Dataset):
             class_id = m['class_id']
 
             mask_image = skimage.io.imread(mask_path)
-            if mask_image.ndim == 4:
+            if mask_image.shape[-1] == 4:
                 mask_image = skimage.color.rgb2gray(skimage.color.rgba2rgb(mask_image))
-            elif mask_image.ndim == 3:
+            elif mask_image.shape[-1] == 3:
                 mask_image = skimage.color.rgb2gray(mask_image)
             mask_image = mask_image.astype(np.uint8)
             mask_image = (mask_image > 0) == 0
@@ -255,19 +255,22 @@ def train(model):
 
 def color_splash(image, mask):
     """Apply color splash effect.
-    image: RGB image [height, width, 3]
+    image: RGB(or -D) image [height, width, channels]
     mask: instance segmentation mask [height, width, instance count]
 
     Returns result image.
     """
     # Make a grayscale copy of the image. The grayscale copy still
     # has 3 RGB channels, though.
-    gray = skimage.color.gray2rgb(skimage.color.rgb2gray(image)) * 255
+    tempImage = image
+    if tempImage.shape[-1] == 4:
+        tempImage = skimage.color.rgba2rgb(tempImage)
+    gray = skimage.color.gray2rgb(skimage.color.rgb2gray(tempImage)) * 255
     # Copy color pixels from the original color image where mask is set
     if mask.shape[-1] > 0:
         # We're treating all instances as one, so collapse the mask into one layer
         mask = (np.sum(mask, -1, keepdims=True) >= 1)
-        splash = np.where(mask, image, gray).astype(np.uint8)
+        splash = np.where(mask, tempImage, gray).astype(np.uint8)
     else:
         splash = gray.astype(np.uint8)
     return splash
