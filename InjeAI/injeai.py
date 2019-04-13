@@ -74,7 +74,7 @@ class InjeAIConfig(Config):
     # Skip detections with < 90% confidence
     DETECTION_MIN_CONFIDENCE = 0.9
 
-    def __init__(self, channel = 3):
+    def __init__(self, channel = 3, epoch = 30, steps_per_epoch = 100):
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
         self.IMAGE_CHANNEL_COUNT = channel
         if channel == 1 or channel == 3: return
@@ -82,6 +82,8 @@ class InjeAIConfig(Config):
             self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 10)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
+        self.EPOCH = epoch
+        self.STEPS_PER_EPOCH = steps_per_epoch
         Config.__init__(self)
 
     ## Custom config by pasteldew
@@ -249,7 +251,7 @@ def train(model):
     print("Training network heads")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=30,
+                epochs=config.EPOCH,
                 layers='all')
 
 
@@ -367,6 +369,16 @@ if __name__ == '__main__':
                         type=bool,
                         metavar="true or false",
                         help='If you want to use pre-trained weights with different channels then set this option to true.')
+    parser.add_argument('--epoch', required=False,
+                        default=30,
+                        type=int
+                        metavar="The number of epoch(default: 30)",
+                        help="The number of epoch")
+    parser.add_argument('--steps', required=False,
+                        default=100,
+                        type=int,
+                        metavar="The number of steps per epoch(default: 100)",
+                        help="The number of steps per epoch")
     args = parser.parse_args()
 
     # Validate arguments
@@ -396,14 +408,16 @@ if __name__ == '__main__':
 
     # Configurations
     if args.command == "train":
-        config = InjeAIConfig(args.channels)
+        config = InjeAIConfig(args.channels, args.epoch, args.steps)
     else:
         class InferenceConfig(InjeAIConfig):
             # Set batch size to 1 since we'll be running inference on
             # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
             GPU_COUNT = 1
             IMAGES_PER_GPU = 1
-        config = InferenceConfig(args.channels)
+            def __init__(self, channels, epoch, steps):
+                InjeAIConfig.__init__(self, channels, epoch, steps)
+        config = InferenceConfig(args.channels, args.epoch, args.steps)
     config.display()
 
     # Create model
