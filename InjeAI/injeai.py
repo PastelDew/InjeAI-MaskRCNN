@@ -371,7 +371,7 @@ if __name__ == '__main__':
                         help='If you want to use pre-trained weights with different channels then set this option to true.')
     parser.add_argument('--epoch', required=False,
                         default=30,
-                        type=int
+                        type=int,
                         metavar="The number of epoch(default: 30)",
                         help="The number of epoch")
     parser.add_argument('--steps', required=False,
