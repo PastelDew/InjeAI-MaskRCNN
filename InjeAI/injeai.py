@@ -215,7 +215,8 @@ class InjeAIDataset(utils.Dataset):
 
             mask_image = skimage.io.imread(mask_path)
             if mask_image.shape[-1] == 4:
-                mask_image = skimage.color.rgb2gray(skimage.color.rgba2rgb(mask_image))
+                mask_image = mask_image[..., :3]
+                mask_image = skimage.color.rgb2gray(mask_image)
             elif mask_image.shape[-1] == 3:
                 mask_image = skimage.color.rgb2gray(mask_image)
             mask_image = mask_image.astype(np.uint8)
