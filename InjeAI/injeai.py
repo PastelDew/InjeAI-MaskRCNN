@@ -187,7 +187,9 @@ class InjeAIDataset(utils.Dataset):
             image = image[..., :3]
         elif image.shape[-1] == 3 and self.channel_count == 4:
             alpha = np.zeros([image.shape[0], image.shape[1]], dtype=np.uint8)
-            image = np.dstack((image, arr))
+            image = np.dstack((image, alpha))
+        elif image.shape[-1] == 4 and self.channel_count == 4:
+            image[..., 3] = skimage.exposure.equalize_hist(image[..., 3])
         return image
 
     def load_mask(self, image_id):
