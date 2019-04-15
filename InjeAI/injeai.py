@@ -269,7 +269,9 @@ def color_splash(image, mask):
     # has 3 RGB channels, though.
     tempImage = image
     if tempImage.shape[-1] == 4:
-        tempImage = skimage.color.rgba2rgb(tempImage)
+        # We ignore the depth channel for visualizing
+        tempImage = tempImage[..., :3]
+        #tempImage = skimage.color.rgba2rgb(tempImage)
     gray = skimage.color.gray2rgb(skimage.color.rgb2gray(tempImage)) * 255
     # Copy color pixels from the original color image where mask is set
     if mask.shape[-1] > 0:
