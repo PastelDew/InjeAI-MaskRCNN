@@ -77,8 +77,9 @@ class InjeAIConfig(Config):
     def __init__(self, channel = 3, epoch = 30, steps_per_epoch = 100, learning_rate = 0.001):
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
         self.IMAGE_CHANNEL_COUNT = channel
-        if channel == 1 or channel == 3: return
-        elif channel == 4:
+        #if channel == 1 or channel == 3: return
+        #elif channel == 4:
+        if channel == 4:
             self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 10)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
