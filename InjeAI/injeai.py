@@ -139,7 +139,6 @@ class InjeAIDataset(utils.Dataset):
             print("[{}] Class Added: ".format(subset), class_id, class_name)
             class_names.append(class_name)
             self.add_class(self.class_source, class_id, class_name)
-            break
         
         for a in annotations:
             filename = a.findtext('filename').replace('.jpg', '.png')
@@ -165,6 +164,7 @@ class InjeAIDataset(utils.Dataset):
 
                     masks.append({"path": mask_path, "class_id": class_id})
                 except:
+                    print("Unexpected error:", sys.exc_info()[0])
                     continue
             
             height, width = image.shape[:2]
@@ -275,11 +275,8 @@ def load_Class(dataset_dir):
     return mappedClasses
     
             
-def train(model):
+def train(model, classes):
     """Train the model."""
-    classes = load_Class(args.dataset)
-    model.config.NUM_CLASSES = len(classes) + 1 # + BG
-    
     # Training dataset.
     dataset_train = InjeAIDataset()
     dataset_train.load_InjeAI(args.dataset, "train", model.config.IMAGE_CHANNEL_COUNT, classes)
@@ -471,6 +468,8 @@ if __name__ == '__main__':
             def __init__(self, channels, epoch, steps, learning_rate):
                 InjeAIConfig.__init__(self, channels, epoch, steps, learning_rate)
         config = InferenceConfig(args.channels, args.epoch, args.steps, args.lr)
+    classes = load_Class(args.dataset)
+    config.NUM_CLASSES = len(classes) + 1 # + BG
     config.display()
 
     # Create model
@@ -514,7 +513,7 @@ if __name__ == '__main__':
 
     # Train or evaluate
     if args.command == "train":
-        train(model)
+        train(model, classes)
     elif args.command == "splash":
         detect_and_color_splash(model, image_path=args.image,
                                 video_path=args.video)
