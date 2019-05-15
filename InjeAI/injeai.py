@@ -76,6 +76,7 @@ class InjeAIConfig(Config):
 
     def __init__(self, channel = 3, epoch = 30, steps_per_epoch = 100, learning_rate = 0.001, num_of_classes = 2):
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
+        self.NUM_CLASSES = num_of_classes
         self.IMAGE_CHANNEL_COUNT = channel
         #if channel == 1 or channel == 3: return
         #elif channel == 4:
@@ -467,8 +468,6 @@ if __name__ == '__main__':
             # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
             GPU_COUNT = 1
             IMAGES_PER_GPU = 1
-            def __init__(self, channels, epoch, steps, learning_rate, num_of_classes = 2):
-                InjeAIConfig.__init__(self, channels, epoch, steps, learning_rate)
         config = InferenceConfig(args.channels, args.epoch, args.steps, args.lr, num_classes)
     config.display()
 
