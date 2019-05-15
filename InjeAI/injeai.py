@@ -203,6 +203,7 @@ class InjeAIDataset(utils.Dataset):
         # If not a InjeAI dataset image, delegate to parent class.
         info = self.image_info[image_id]
         if info["source"] != self.class_source or len(info["masks"]) == 0:
+            print("Passing load_mask to default function.", info["source"], len(info["masks"]))
             return super(self.__class__, self).load_mask(image_id)
 
         # Convert polygons to a bitmap mask of shape
