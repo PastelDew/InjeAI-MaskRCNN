@@ -159,10 +159,13 @@ class InjeAIDataset(utils.Dataset):
                     continue
                 hasClass = False
 
-                class_name = o.findtext('name')
-                class_id = classes[class_names.index(class_name)]['id']
+                try:
+                    class_name = o.findtext('name')
+                    class_id = classes[class_names.index(class_name)]['id']
 
-                masks.append({"path": mask_path, "class_id": class_id})
+                    masks.append({"path": mask_path, "class_id": class_id})
+                else:
+                    continue
             
             height, width = image.shape[:2]
             self.add_image(
