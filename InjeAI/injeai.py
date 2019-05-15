@@ -138,7 +138,8 @@ class InjeAIDataset(utils.Dataset):
             class_name, class_id = c["class"], c["id"]
             print("[{}] Class Added: ".format(subset), class_id, class_name)
             class_names.append(class_name)
-            #self.add_class(self.class_source, class_id, class_name)
+            self.add_class(self.class_source, class_id, class_name)
+            break
         
         for a in annotations:
             filename = a.findtext('filename').replace('.jpg', '.png')
