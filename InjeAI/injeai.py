@@ -138,7 +138,7 @@ class InjeAIDataset(utils.Dataset):
             class_name, class_id = c["class"], c["id"]
             print("[{}] Class Added: ".format(subset), class_id, class_name)
             class_names.append(class_name)
-            self.add_class(self.class_source, class_id, class_name)
+            #self.add_class(self.class_source, class_id, class_name)
         
         for a in annotations:
             filename = a.findtext('filename').replace('.jpg', '.png')
@@ -273,7 +273,7 @@ def load_Class(dataset_dir):
 def train(model):
     """Train the model."""
     classes = load_Class(args.dataset)
-    model.config.NUM_CLASSES = len(classes)
+    model.config.NUM_CLASSES = len(classes) + 1 # + BG
     
     # Training dataset.
     dataset_train = InjeAIDataset()
