@@ -133,9 +133,11 @@ class InjeAIDataset(utils.Dataset):
         annotations = [et.parse(a).getroot() for a in annotations]
         mask_dir = join(dataset_dir, "masks")
 
+        class_names = []
         for c in classes:
             class_name, class_id = c["class"], c["id"]
             print("[{}] Class Added: ".format(subset), class_id, class_name)
+            class_names.append(class_name)
             self.add_class(self.class_source, class_id, class_name)
         
         for a in annotations:
@@ -157,7 +159,7 @@ class InjeAIDataset(utils.Dataset):
                 hasClass = False
 
                 class_name = o.findtext('name')
-                class_id = classes[classes.index(class_name)]
+                class_id = classes[class_names.index(class_name)]
 
                 masks.append({"path": mask_path, "class_id": class_id})
             
