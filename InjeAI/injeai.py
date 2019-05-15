@@ -231,8 +231,9 @@ class InjeAIDataset(utils.Dataset):
 
 def load_Class(dataset_dir):
     # annotation file paths which are xml
-    annotations = [join(dataset_dir, "annotations", f.replace(".png", ".xml"))
-                    for f in imageFiles]
+    annotation_dir = join(dataset_dir, "annotations")
+    annotations = [join(dataset_dir, "annotations", f)
+                    for f in listdir(annotation_dir)]
     
     # xml tree root list
     annotations = [et.parse(a).getroot() for a in annotations]
