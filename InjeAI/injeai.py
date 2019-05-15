@@ -157,7 +157,7 @@ class InjeAIDataset(utils.Dataset):
                 hasClass = False
 
                 class_name = o.findtext('name')
-                class_id = classes[self.class_info]
+                class_id = classes[classes.index(class_name)]
 
                 masks.append({"path": mask_path, "class_id": class_id})
             
