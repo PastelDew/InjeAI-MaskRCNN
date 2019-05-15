@@ -164,7 +164,7 @@ class InjeAIDataset(utils.Dataset):
                     class_id = classes[class_names.index(class_name)]['id']
 
                     masks.append({"path": mask_path, "class_id": class_id})
-                else:
+                except:
                     continue
             
             height, width = image.shape[:2]
