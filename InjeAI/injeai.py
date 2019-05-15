@@ -80,7 +80,7 @@ class InjeAIConfig(Config):
         #if channel == 1 or channel == 3: return
         #elif channel == 4:
         if channel == 4:
-            self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 10)
+            self.MEAN_PIXEL = np.append(self.MEAN_PIXEL, 114.8)
         #elif channel == 1:
             #self.MEAN_PIXEL = [np.sum(self.MEAN_PIXEL) / 3]
         self.EPOCH = epoch
@@ -109,8 +109,7 @@ class InjeAIConfig(Config):
 ############################################################
 
 class InjeAIDataset(utils.Dataset):
-
-    def load_InjeAI(self, dataset_dir, subset, channels):
+    def load_InjeAI(self, dataset_dir, subset, channels, classes):
         """Load a subset of the InjeAI dataset.
         dataset_dir: Root directory of the dataset.
         subset: Subset to load: train or val
@@ -133,6 +132,11 @@ class InjeAIDataset(utils.Dataset):
         # xml tree root list
         annotations = [et.parse(a).getroot() for a in annotations]
         mask_dir = join(dataset_dir, "masks")
+
+        for c in classes:
+            class_name, class_id = c["class"], c["id"]
+            print("[{}] Class Added: ".format(subset), class_id, class_name)
+            self.add_class(self.class_source, class_id, class_name)
         
         for a in annotations:
             filename = a.findtext('filename').replace('.jpg', '.png')
@@ -153,17 +157,7 @@ class InjeAIDataset(utils.Dataset):
                 hasClass = False
 
                 class_name = o.findtext('name')
-                class_id = len(self.class_info)
-                for info in self.class_info:
-                    if info['source'] == self.class_source \
-                        and info['name'] == class_name:
-                        hasClass = True
-                        class_id = info['id']
-                        break
-
-                if not hasClass:
-                    print("[{}] Class Added: ".format(subset), class_id, class_name)
-                    self.add_class(self.class_source, class_id, class_name)
+                class_id = classes[self.class_info]
 
                 masks.append({"path": mask_path, "class_id": class_id})
             
@@ -235,17 +229,57 @@ class InjeAIDataset(utils.Dataset):
         else:
             super(self.__class__, self).image_reference(image_id)
 
+def load_Class(dataset_dir):
+    # annotation file paths which are xml
+    annotations = [join(dataset_dir, "annotations", f.replace(".png", ".xml"))
+                    for f in imageFiles]
+    
+    # xml tree root list
+    annotations = [et.parse(a).getroot() for a in annotations]
+    mask_dir = join(dataset_dir, "masks")
+    
+    classes = []
+    for a in annotations:
+        for o in a.findall('object'):
+            if o.findtext('deleted') != '0':
+                continue
+            
+            mask_path = join(mask_dir, o.find('segm').findtext('mask'))
 
+            if not isfile(mask_path):
+                continue
+            hasClass = False
+
+            class_name = o.findtext('name')
+            if class_name in classes:
+                continue
+            else:
+                classes.append(class_name)
+    classes.sort()
+    mappedClasses = []
+    idx = 1
+    for c in classes:
+        mappedClasses.append({
+            "class": c,
+            "id": idx
+        })
+        idx = idx + 1
+    return mappedClasses
+    
+            
 def train(model):
     """Train the model."""
+    classes = load_Class(args.dataset)
+    model.config.NUM_CLASSES = len(classes)
+    
     # Training dataset.
     dataset_train = InjeAIDataset()
-    dataset_train.load_InjeAI(args.dataset, "train", model.config.IMAGE_CHANNEL_COUNT)
+    dataset_train.load_InjeAI(args.dataset, "train", model.config.IMAGE_CHANNEL_COUNT, classes)
     dataset_train.prepare()
 
     # Validation dataset
     dataset_val = InjeAIDataset()
-    dataset_val.load_InjeAI(args.dataset, "val", model.config.IMAGE_CHANNEL_COUNT)
+    dataset_val.load_InjeAI(args.dataset, "val", model.config.IMAGE_CHANNEL_COUNT, classes)
     dataset_val.prepare()
 
     # *** This training schedule is an example. Update to your needs ***
