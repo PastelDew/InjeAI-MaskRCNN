@@ -74,7 +74,7 @@ class InjeAIConfig(Config):
     # Skip detections with < 90% confidence
     DETECTION_MIN_CONFIDENCE = 0.9
 
-    def __init__(self, channel = 3, epoch = 30, steps_per_epoch = 100, learning_rate = 0.001):
+    def __init__(self, channel = 3, epoch = 30, steps_per_epoch = 100, learning_rate = 0.001, num_of_classes = 2):
         assert channel == 1 or channel == 3 or channel == 4, "The channel must be 1, 3 or 4! Given: {}".format(channel)
         self.IMAGE_CHANNEL_COUNT = channel
         #if channel == 1 or channel == 3: return
@@ -457,19 +457,19 @@ if __name__ == '__main__':
     
 
     # Configurations
+    classes = load_Class(args.dataset)
+    num_classes = len(classes) + 1 # + BG
     if args.command == "train":
-        config = InjeAIConfig(args.channels, args.epoch, args.steps, args.lr)
+        config = InjeAIConfig(args.channels, args.epoch, args.steps, args.lr, num_classes)
     else:
         class InferenceConfig(InjeAIConfig):
             # Set batch size to 1 since we'll be running inference on
             # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
             GPU_COUNT = 1
             IMAGES_PER_GPU = 1
-            def __init__(self, channels, epoch, steps, learning_rate):
+            def __init__(self, channels, epoch, steps, learning_rate, num_of_classes = 2):
                 InjeAIConfig.__init__(self, channels, epoch, steps, learning_rate)
-        config = InferenceConfig(args.channels, args.epoch, args.steps, args.lr)
-    classes = load_Class(args.dataset)
-    config.NUM_CLASSES = len(classes) + 1 # + BG
+        config = InferenceConfig(args.channels, args.epoch, args.steps, args.lr, num_classes)
     config.display()
 
     # Create model
