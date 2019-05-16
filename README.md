@@ -1,4 +1,4 @@
-# This project is deprecated!
+# This project was deprecated!
 All of this project was merged in [this project(RGB-D-Mask-R-CNN)](https://github.com/PastelDew/RGB-D-Mask-R-CNN)
 
 # InjeAI-MaskRCNN
